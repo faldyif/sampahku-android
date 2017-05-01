@@ -1,21 +1,31 @@
 package com.sampah_ku.sampahku.fragment;
 
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.sampah_ku.sampahku.AppConfig;
 import com.sampah_ku.sampahku.R;
+
+import java.util.Random;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -27,6 +37,8 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+
+    private static final Integer RC_LOCATION_PERM = 1832;
 
     private Double centerLatitude;
     private Double centerLongitude;
@@ -91,7 +103,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         // Set the center of the map
         CameraPosition cameraPosition = new CameraPosition.Builder()
                 .target(new LatLng(centerLatitude, centerLongitude))      // Sets the center of the map to location user
-                .zoom(13)                   // Sets the zoom
+                .zoom(17)                   // Sets the zoom
                 .build();                   // Creates a CameraPosition from the builder
         googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
@@ -100,5 +112,55 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         googleMap.setIndoorEnabled(true);
         googleMap.setBuildingsEnabled(true);
         googleMap.getUiSettings().setZoomControlsEnabled(false);
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, RC_LOCATION_PERM);
+        } else {
+            googleMap.setMyLocationEnabled(true);
+        }
+
+        for(int i=0;i<50;i++) {
+            googleMap.addMarker(new MarkerOptions()
+                    .position(new LatLng(centerLatitude + randomInRange(-0.01, 0.01), centerLongitude + randomInRange(-0.01, 0.01)))
+                    .title("Tempat sampah").snippet("Klik untuk melaporkan tempat sampah yang salah")
+                    .icon(BitmapDescriptorFactory.fromResource(AppConfig.DRAWABLE_TRASH_PORTABLE_VERIFIED)));
+            googleMap.addMarker(new MarkerOptions()
+                    .position(new LatLng(centerLatitude + randomInRange(-0.01, 0.01), centerLongitude + randomInRange(-0.01, 0.01)))
+                    .title("Tempat sampah").snippet("Klik untuk melaporkan tempat sampah yang salah")
+                    .icon(BitmapDescriptorFactory.fromResource(AppConfig.DRAWABLE_TRASH_TETAP_VERIFIED)));
+            googleMap.addMarker(new MarkerOptions()
+                    .position(new LatLng(centerLatitude + randomInRange(-0.01, 0.01), centerLongitude + randomInRange(-0.01, 0.01)))
+                    .title("Tempat sampah").snippet("Klik untuk melaporkan tempat sampah yang salah")
+                    .icon(BitmapDescriptorFactory.fromResource(AppConfig.DRAWABLE_TRASH_PORTABLE_UNVERIFIED)));
+            googleMap.addMarker(new MarkerOptions()
+                    .position(new LatLng(centerLatitude + randomInRange(-0.01, 0.01), centerLongitude + randomInRange(-0.01, 0.01)))
+                    .title("Tempat sampah").snippet("Klik untuk melaporkan tempat sampah yang salah")
+                    .icon(BitmapDescriptorFactory.fromResource(AppConfig.DRAWABLE_TRASH_TETAP_UNVERIFIED)));
+        }
+    }
+
+    protected static Random random = new Random();
+
+    public static double randomInRange(double min, double max) {
+        double range = max - min;
+        double scaled = random.nextDouble() * range;
+        double shifted = scaled + min;
+        return shifted; // == (rand.nextDouble() * (max-min)) + min;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == RC_LOCATION_PERM) {
+            // If request is cancelled, the result arrays are empty.
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, RC_LOCATION_PERM);
+                } else {
+                    googleMap.setMyLocationEnabled(true);
+                }
+            } else {
+                Toast.makeText(getActivity(), "Lokasi perangkat dibutuhkan untuk fitur lokasi", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }
