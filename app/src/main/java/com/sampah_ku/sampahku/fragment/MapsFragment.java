@@ -2,17 +2,20 @@ package com.sampah_ku.sampahku.fragment;
 
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -24,6 +27,9 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.sampah_ku.sampahku.AppConfig;
 import com.sampah_ku.sampahku.R;
+import com.sampah_ku.sampahku.augmented_reality.activity.AugmentedReality;
+import com.sampah_ku.sampahku.augmented_reality.activity.Demo;
+import com.sampah_ku.sampahku.augmented_reality.activity.SensorsActivity;
 
 import java.util.Random;
 
@@ -75,13 +81,34 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
             centerLatitude = getArguments().getDouble(ARG_PARAM1);
             centerLongitude = getArguments().getDouble(ARG_PARAM2);
         }
+
+        if (ContextCompat.checkSelfPermission(getActivity(),
+                Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
+                    Manifest.permission.READ_CONTACTS)) {
+            } else {
+                ActivityCompat.requestPermissions(getActivity(),
+                        new String[]{Manifest.permission.CAMERA},
+                        112);
+            }
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_maps, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_maps, container, false);
+        FloatingActionButton tambahFab = (FloatingActionButton) rootView.findViewById(R.id.tambah_fab);
+        tambahFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), Demo.class);
+                startActivity(intent);
+            }
+        });
+        return rootView;
     }
 
     @Override

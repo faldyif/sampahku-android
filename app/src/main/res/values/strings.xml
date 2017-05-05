@@ -19,4 +19,6 @@
     <string name="error_invalid_password">Password terlalu pendek</string>
     <string name="error_incorrect_password">Password salah</string>
     <string name="error_field_required">Bidang ini perlu diisi</string>
+
+    <string name="google_places_api_key">AIzaSyC5mTsDhjayzCqXH87ggEYsfswR1cStfX8</string>
 </resources>

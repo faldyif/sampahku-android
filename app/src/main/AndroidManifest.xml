@@ -9,6 +9,10 @@
     -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <uses-feature android:name="android.hardware.camera" />
 
     <application
         android:name=".function.AppController"
@@ -47,6 +51,8 @@
             android:name=".activity.RegisterActivity"
             android:label="Register"></activity>
         <activity android:name=".activity.StoryActivity"></activity>
+        <activity android:name=".augmented_reality.activity.Demo"
+            android:screenOrientation="landscape"></activity>
     </application>
 
 </manifest>
