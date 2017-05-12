@@ -121,7 +121,7 @@ public class NewTrashActivity extends AppCompatActivity {
             params.put("trash_type_id", 2);
         }
         params.put("latitude", gps.getLatitude());
-        params.put("longitude", gps.getLatitude());
+        params.put("longitude", gps.getLongitude());
         params.put("accuracy", gps.getAccuracy());
         params.put("user_id", user.get("id"));
 
