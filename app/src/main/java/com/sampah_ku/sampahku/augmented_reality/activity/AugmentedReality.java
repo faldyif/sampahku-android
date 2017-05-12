@@ -1,30 +1,54 @@
 package com.sampah_ku.sampahku.augmented_reality.activity;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.text.DecimalFormat;
+import java.util.Date;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
+import android.support.annotation.DrawableRes;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup.LayoutParams;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.widget.Toast;
 
+import com.frosquivel.magicalcamera.MagicalCamera;
+import com.frosquivel.magicalcamera.MagicalPermissions;
+import com.sampah_ku.sampahku.R;
+import com.sampah_ku.sampahku.activity.NewTrashActivity;
 import com.sampah_ku.sampahku.augmented_reality.camera.CameraSurface;
 import com.sampah_ku.sampahku.augmented_reality.data.ARData;
 import com.sampah_ku.sampahku.augmented_reality.ui.Marker;
 import com.sampah_ku.sampahku.augmented_reality.widget.VerticalSeekBar;
 import com.sampah_ku.sampahku.augmented_reality.widget.VerticalTextView;
+
+import static java.security.AccessController.getContext;
 
 /**
  * This class extends the SensorsActivity and is designed tie the AugmentedView
@@ -53,13 +77,16 @@ public class AugmentedReality extends SensorsActivity implements OnTouchListener
     public static final float TWENTY_PERCENT = 2f * TEN_PERCENT;
     public static final float EIGHTY_PERCENTY = 4f * TWENTY_PERCENT;
 
-    public static boolean ui_portrait = false;  // Defaulted to LANDSCAPE use  
+    public static boolean ui_portrait = false;  // Defaulted to LANDSCAPE use
     public static boolean showRadar = true;
-    public static boolean showZoomBar = true;
+    public static boolean showZoomBar = false;
     public static boolean useRadarAutoOrientate = true;
     public static boolean useMarkerAutoRotate = true;
     public static boolean useDataSmoothing = true;
     public static boolean useCollisionDetection = false; // defaulted OFF
+
+    private MagicalPermissions magicalPermissions;
+    private MagicalCamera magicalCamera;
 
     /**
      * {@inheritDoc}
@@ -68,13 +95,36 @@ public class AugmentedReality extends SensorsActivity implements OnTouchListener
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        String[] permissions = new String[] {
+                Manifest.permission.CAMERA,
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.ACCESS_FINE_LOCATION
+        };
+        magicalPermissions = new MagicalPermissions(this, permissions);
+
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
         camScreen = new CameraSurface(this);
         setContentView(camScreen);
+
+        //The pixel percentage is declare like an percentage of 100, if your value is 50, the photo will have the middle quality of your camera.
+        // this value could be only 1 to 100.
+        int RESIZE_PHOTO_PIXELS_PERCENTAGE = 80;
+        magicalCamera = new MagicalCamera(this,RESIZE_PHOTO_PIXELS_PERCENTAGE, magicalPermissions);
 
         augmentedView = new AugmentedView(this);
         augmentedView.setOnTouchListener(this);
         LayoutParams augLayout = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
         addContentView(augmentedView, augLayout);
+
+        FloatingActionButton fab = new FloatingActionButton(this);
+
+        FrameLayout.LayoutParams frameLayoutParams = new FrameLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT, Gravity.CENTER_VERTICAL | Gravity.RIGHT);
+        addContentView(fab, frameLayoutParams);
 
         zoomLayout = new LinearLayout(this);
         zoomLayout.setVisibility((showZoomBar) ? LinearLayout.VISIBLE : LinearLayout.GONE);
@@ -97,13 +147,54 @@ public class AugmentedReality extends SensorsActivity implements OnTouchListener
         zoomBarParams.gravity = Gravity.CENTER_HORIZONTAL;
         zoomLayout.addView(myZoomBar, zoomBarParams);
 
-        FrameLayout.LayoutParams frameLayoutParams = new FrameLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.FILL_PARENT, Gravity.RIGHT);
+//        FrameLayout.LayoutParams frameLayoutParams = new FrameLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.FILL_PARENT, Gravity.RIGHT);
         addContentView(zoomLayout, frameLayoutParams);
 
         updateDataOnZoom();
 
         PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
         wakeLock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, "DoNotDimScreen");
+
+        Drawable drawable = ContextCompat.getDrawable(this, R.drawable.ic_photo_camera_black_24dp);
+
+        fab.setImageDrawable(drawable);
+        // Gets the layout params that will allow you to resize the layout
+        LayoutParams params = fab.getLayoutParams();
+        // Changes the height and width to the specified *pixels*
+        params.height = 250;
+        params.width = 250;
+        fab.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.colorPrimary)));
+        fab.setLayoutParams(params);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //take photo
+                magicalCamera.takePhoto();
+                Toast.makeText(AugmentedReality.this, "Woyyy", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        //CALL THIS METHOD EVER
+        magicalCamera.resultPhoto(requestCode, resultCode, data);
+
+        //this is for rotate picture in this method
+        //magicalCamera.resultPhoto(requestCode, resultCode, data, MagicalCamera.ORIENTATION_ROTATE_180);
+
+        //if you need save your bitmap in device use this method and return the path if you need this
+        //You need to send, the bitmap picture, the photo name, the directory name, the picture type, and autoincrement photo name if           //you need this send true, else you have the posibility or realize your standard name for your pictures.
+        String path = magicalCamera.savePhotoInMemoryDevice(magicalCamera.getPhoto(),"SampahKuNewTrash", "sampahku", MagicalCamera.JPEG, true);
+
+        if(path != null){
+            Toast.makeText(AugmentedReality.this, "The photo is save in device, please check this path: " + path, Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, NewTrashActivity.class);
+            intent.putExtra("pathImage", path);
+            startActivity(intent);
+        }else{
+            Toast.makeText(AugmentedReality.this, "Sorry your photo dont write in device, maybe your permission is still not allowing you to write on external storage", Toast.LENGTH_SHORT).show();
+        }
     }
 
     /**

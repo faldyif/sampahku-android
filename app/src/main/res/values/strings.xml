@@ -21,4 +21,9 @@
     <string name="error_field_required">Bidang ini perlu diisi</string>
 
     <string name="google_places_api_key">AIzaSyC5mTsDhjayzCqXH87ggEYsfswR1cStfX8</string>
+
+    <string-array name="trash_type">
+        <item>Tempat Sampah Portable</item>
+        <item>TPS</item>
+    </string-array>
 </resources>

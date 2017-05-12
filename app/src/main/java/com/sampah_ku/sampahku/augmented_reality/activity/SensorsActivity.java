@@ -81,7 +81,7 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
         // [ 1, 0, 0 ]
         // [ 0, cos, -sin ]
         // [ 0, sin, cos ]
-        xAxisRotation.set(1f, 0f,                       0f, 
+        xAxisRotation.set(1f, 0f,                       0f,
                           0f, Math.cos(neg90rads), -Math.sin(neg90rads),
                           0f, Math.sin(neg90rads), Math.cos(neg90rads));
 

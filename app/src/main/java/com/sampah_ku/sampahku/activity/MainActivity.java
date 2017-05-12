@@ -1,5 +1,6 @@
 package com.sampah_ku.sampahku.activity;
 
+import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -20,6 +22,7 @@ import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.frosquivel.magicalcamera.MagicalPermissions;
 import com.sampah_ku.sampahku.R;
 import com.sampah_ku.sampahku.fragment.MapsFragment;
 import com.sampah_ku.sampahku.fragment.RewardFragment;
@@ -27,6 +30,7 @@ import com.sampah_ku.sampahku.function.SQLiteHandler;
 import com.sampah_ku.sampahku.function.SessionManager;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -89,8 +93,6 @@ public class MainActivity extends AppCompatActivity
 
         namaUser.setText(user.get("name"));
         emailUser.setText(user.get("email"));
-
-
     }
 
     @Override

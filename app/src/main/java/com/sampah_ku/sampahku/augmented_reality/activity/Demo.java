@@ -19,6 +19,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.ViewGroup.LayoutParams;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -27,6 +29,7 @@ import com.sampah_ku.sampahku.augmented_reality.data.ARData;
 import com.sampah_ku.sampahku.augmented_reality.data.GooglePlacesDataSource;
 import com.sampah_ku.sampahku.augmented_reality.data.LocalDataSource;
 import com.sampah_ku.sampahku.augmented_reality.data.NetworkDataSource;
+import com.sampah_ku.sampahku.augmented_reality.data.SampahkuApiDataSource;
 import com.sampah_ku.sampahku.augmented_reality.data.WikipediaDataSource;
 import com.sampah_ku.sampahku.augmented_reality.ui.Marker;
 import com.sampah_ku.sampahku.augmented_reality.widget.VerticalTextView;
@@ -47,6 +50,7 @@ public class Demo extends AugmentedReality {
 
     private static Toast myToast = null;
     private static VerticalTextView text = null;
+    private SampahkuApiDataSource sampahku;
 
     /**
      * {@inheritDoc}
@@ -69,14 +73,9 @@ public class Demo extends AugmentedReality {
         // Setting duration and displaying the toast
         myToast.setDuration(Toast.LENGTH_SHORT);
 
-        // Local
-        LocalDataSource localData = new LocalDataSource(this.getResources());
-        ARData.addMarkers(localData.getMarkers());
-
-        NetworkDataSource wikipedia = new WikipediaDataSource(this.getResources());
-        sources.put("wiki", wikipedia);
-        NetworkDataSource googlePlaces = new GooglePlacesDataSource(this.getResources());
-        sources.put("googlePlaces", googlePlaces);
+        // Fetch data from firebase
+        sampahku = new SampahkuApiDataSource(this.getResources());
+        sampahku.loadMarkers();
     }
 
     /**
