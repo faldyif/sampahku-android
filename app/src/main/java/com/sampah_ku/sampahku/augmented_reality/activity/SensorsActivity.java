@@ -14,7 +14,6 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.util.FloatMath;
 import android.util.Log;
 
 import com.sampah_ku.sampahku.augmented_reality.common.LowPassFilter;
@@ -211,7 +210,7 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
         if (!computing.compareAndSet(false, true)) return;
 
         if (evt.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-        	if (AugmentedReality.useDataSmoothing) { 
+        	if (AugmentedRealityAddTrash.useDataSmoothing) {
 	            smooth = LowPassFilter.filter(0.5f, 1.0f, evt.values, grav);
 	            grav[0] = smooth[0];
 	            grav[1] = smooth[1];
@@ -225,7 +224,7 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
         	ARData.setDeviceOrientation(Orientation.getDeviceOrientation());
         	ARData.setDeviceOrientationAngle(Orientation.getDeviceAngle());
         } else if (evt.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
-        	if (AugmentedReality.useDataSmoothing) { 
+        	if (AugmentedRealityAddTrash.useDataSmoothing) {
 	            smooth = LowPassFilter.filter(2.0f, 4.0f, evt.values, mag);
 	            mag[0] = smooth[0];
 	            mag[1] = smooth[1];

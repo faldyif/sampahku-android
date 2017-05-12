@@ -1,4 +1,26 @@
-package com.sampah_ku.sampahku.augmented_reality.activity;
+package com.sampah_ku.sampahku.activity;
+
+import android.graphics.Color;
+import android.location.Location;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.ViewGroup.LayoutParams;
+import android.widget.LinearLayout;
+import android.widget.Toast;
+
+import com.getbase.floatingactionbutton.FloatingActionButton;
+import com.sampah_ku.sampahku.R;
+import com.sampah_ku.sampahku.augmented_reality.activity.AugmentedRealityAddTrash;
+import com.sampah_ku.sampahku.augmented_reality.activity.AugmentedRealityStory;
+import com.sampah_ku.sampahku.augmented_reality.data.ARData;
+import com.sampah_ku.sampahku.augmented_reality.data.NetworkDataSource;
+import com.sampah_ku.sampahku.augmented_reality.data.SampahkuApiDataSource;
+import com.sampah_ku.sampahku.augmented_reality.ui.Marker;
+import com.sampah_ku.sampahku.augmented_reality.widget.VerticalTextView;
 
 import java.util.List;
 import java.util.Locale;
@@ -10,39 +32,15 @@ import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import android.graphics.Color;
-import android.location.Location;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.Gravity;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.ViewGroup.LayoutParams;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.LinearLayout;
-import android.widget.Toast;
-
-import com.sampah_ku.sampahku.R;
-import com.sampah_ku.sampahku.augmented_reality.data.ARData;
-import com.sampah_ku.sampahku.augmented_reality.data.GooglePlacesDataSource;
-import com.sampah_ku.sampahku.augmented_reality.data.LocalDataSource;
-import com.sampah_ku.sampahku.augmented_reality.data.NetworkDataSource;
-import com.sampah_ku.sampahku.augmented_reality.data.SampahkuApiDataSource;
-import com.sampah_ku.sampahku.augmented_reality.data.WikipediaDataSource;
-import com.sampah_ku.sampahku.augmented_reality.ui.Marker;
-import com.sampah_ku.sampahku.augmented_reality.widget.VerticalTextView;
-
 /**
- * This class extends the AugmentedReality and is designed to be an example on
- * how to extends the AugmentedReality class to show multiple data sources.
+ * This class extends the AugmentedRealityAddTrash and is designed to be an example on
+ * how to extends the AugmentedRealityAddTrash class to show multiple data sources.
  * 
  * @author Justin Wetherell <phishman3579@gmail.com>
  */
-public class Demo extends AugmentedReality {
+public class AddStoryActivity extends AugmentedRealityStory {
 	
-    private static final String TAG = "Demo";
+    private static final String TAG = "AddStoryActivity";
     private static final String locale = Locale.getDefault().getLanguage();
     private static final BlockingQueue<Runnable> queue = new ArrayBlockingQueue<Runnable>(1);
     private static final ThreadPoolExecutor exeService = new ThreadPoolExecutor(1, 1, 20, TimeUnit.SECONDS, queue);
@@ -51,6 +49,7 @@ public class Demo extends AugmentedReality {
     private static Toast myToast = null;
     private static VerticalTextView text = null;
     private SampahkuApiDataSource sampahku;
+    private FloatingActionButton fab;
 
     /**
      * {@inheritDoc}
@@ -73,7 +72,7 @@ public class Demo extends AugmentedReality {
         // Setting duration and displaying the toast
         myToast.setDuration(Toast.LENGTH_SHORT);
 
-        // Fetch data from firebase
+        // Fetch data from api
         sampahku = new SampahkuApiDataSource(this.getResources());
         sampahku.loadMarkers();
     }

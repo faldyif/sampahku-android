@@ -3,7 +3,7 @@ package com.sampah_ku.sampahku.augmented_reality.ui;
 import android.graphics.Canvas;
 import android.graphics.Color;
 
-import com.sampah_ku.sampahku.augmented_reality.activity.AugmentedReality;
+import com.sampah_ku.sampahku.augmented_reality.activity.AugmentedRealityAddTrash;
 import com.sampah_ku.sampahku.augmented_reality.camera.CameraModel;
 import com.sampah_ku.sampahku.augmented_reality.common.Orientation.ORIENTATION;
 import com.sampah_ku.sampahku.augmented_reality.data.ARData;
@@ -69,11 +69,11 @@ public class Radar {
 
         // Adjust upside down to compensate for zoom-bar
         int ui_ud_pad = 80;
-        if (AugmentedReality.ui_portrait) 
+        if (AugmentedRealityAddTrash.ui_portrait)
             ui_ud_pad = 55;
 
         ORIENTATION orient = ORIENTATION.LANDSCAPE;
-        if (AugmentedReality.useRadarAutoOrientate) {
+        if (AugmentedRealityAddTrash.useRadarAutoOrientate) {
             orient = ARData.getDeviceOrientation();
             if (orient==ORIENTATION.PORTRAIT) {
                 canvas.save();

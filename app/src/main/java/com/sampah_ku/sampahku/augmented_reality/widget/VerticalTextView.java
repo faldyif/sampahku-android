@@ -1,6 +1,6 @@
 package com.sampah_ku.sampahku.augmented_reality.widget;
 
-import com.sampah_ku.sampahku.augmented_reality.activity.AugmentedReality;
+import com.sampah_ku.sampahku.augmented_reality.activity.AugmentedRealityAddTrash;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -29,7 +29,7 @@ public class VerticalTextView extends TextView {
      */
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        if (AugmentedReality.ui_portrait) {
+        if (AugmentedRealityAddTrash.ui_portrait) {
             super.onMeasure(heightMeasureSpec, widthMeasureSpec);
             setMeasuredDimension(getMeasuredHeight(), getMeasuredWidth());
         } else {
@@ -43,7 +43,7 @@ public class VerticalTextView extends TextView {
      */
     @Override
     protected void onDraw(Canvas canvas) {
-        if (AugmentedReality.ui_portrait) {
+        if (AugmentedRealityAddTrash.ui_portrait) {
             TextPaint textPaint = getPaint();
             textPaint.setColor(getCurrentTextColor());
             textPaint.drawableState = getDrawableState();

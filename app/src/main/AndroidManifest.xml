@@ -51,11 +51,14 @@
         <activity
             android:name=".activity.RegisterActivity"
             android:label="Register" />
-        <activity android:name=".activity.StoryActivity" />
         <activity
-            android:name=".augmented_reality.activity.Demo"
+            android:name=".activity.AddTrashActivity"
             android:screenOrientation="landscape" />
-        <activity android:name=".activity.NewTrashActivity"></activity>
+        <activity
+            android:name=".activity.AddStoryActivity"
+            android:screenOrientation="landscape" />
+        <activity android:name=".activity.NewTrashActivity" />
+        <activity android:name=".activity.NewStoryActivity" />
     </application>
 
 </manifest>

@@ -5,9 +5,6 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
@@ -28,21 +25,16 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
 import com.loopj.android.http.TextHttpResponseHandler;
-import com.sampah_ku.sampahku.AppConfig;
 import com.sampah_ku.sampahku.R;
-import com.sampah_ku.sampahku.augmented_reality.activity.AugmentedReality;
-import com.sampah_ku.sampahku.augmented_reality.activity.Demo;
-import com.sampah_ku.sampahku.augmented_reality.activity.SensorsActivity;
-import com.sampah_ku.sampahku.augmented_reality.data.ARData;
-import com.sampah_ku.sampahku.augmented_reality.ui.IconMarker;
-import com.sampah_ku.sampahku.augmented_reality.ui.Marker;
+import com.sampah_ku.sampahku.activity.AddStoryActivity;
+import com.sampah_ku.sampahku.activity.AddTrashActivity;
+import com.sampah_ku.sampahku.activity.NewStoryActivity;
 import com.sampah_ku.sampahku.function.SampahkuRestClient;
 import com.sampah_ku.sampahku.model.ResponseTrash;
 import com.sampah_ku.sampahku.model.Trash;
@@ -50,9 +42,7 @@ import com.sampah_ku.sampahku.model.Trash;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -129,7 +119,15 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         tambahFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), Demo.class);
+                Intent intent = new Intent(getActivity(), AddTrashActivity.class);
+                startActivity(intent);
+            }
+        });
+        FloatingActionButton storyFab = (FloatingActionButton) rootView.findViewById(R.id.story_fab);
+        storyFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), AddStoryActivity.class);
                 startActivity(intent);
             }
         });

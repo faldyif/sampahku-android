@@ -1,27 +1,16 @@
 package com.sampah_ku.sampahku.augmented_reality.activity;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.text.DecimalFormat;
-import java.util.Date;
-
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
-import android.support.annotation.DrawableRes;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -41,6 +30,8 @@ import android.widget.Toast;
 import com.frosquivel.magicalcamera.MagicalCamera;
 import com.frosquivel.magicalcamera.MagicalPermissions;
 import com.sampah_ku.sampahku.R;
+import com.sampah_ku.sampahku.activity.AddStoryActivity;
+import com.sampah_ku.sampahku.activity.NewStoryActivity;
 import com.sampah_ku.sampahku.activity.NewTrashActivity;
 import com.sampah_ku.sampahku.augmented_reality.camera.CameraSurface;
 import com.sampah_ku.sampahku.augmented_reality.data.ARData;
@@ -48,7 +39,7 @@ import com.sampah_ku.sampahku.augmented_reality.ui.Marker;
 import com.sampah_ku.sampahku.augmented_reality.widget.VerticalSeekBar;
 import com.sampah_ku.sampahku.augmented_reality.widget.VerticalTextView;
 
-import static java.security.AccessController.getContext;
+import java.text.DecimalFormat;
 
 /**
  * This class extends the SensorsActivity and is designed tie the AugmentedView
@@ -56,12 +47,12 @@ import static java.security.AccessController.getContext;
  * 
  * @author Justin Wetherell <phishman3579@gmail.com>
  */
-public class AugmentedReality extends SensorsActivity implements OnTouchListener {
+public class AugmentedRealityStory extends SensorsActivity implements OnTouchListener {
 
-    private static final String TAG = "AugmentedReality";
+    private static final String TAG = "AugmentedRealityAddTrash";
     private static final DecimalFormat FORMAT = new DecimalFormat("#.##");
     private static final int ZOOMBAR_BACKGROUND_COLOR = Color.argb(125, 55, 55, 55);
-    private static final String END_TEXT = FORMAT.format(AugmentedReality.MAX_ZOOM) + " km";
+    private static final String END_TEXT = FORMAT.format(AugmentedRealityStory.MAX_ZOOM) + " km";
     private static final int END_TEXT_COLOR = Color.WHITE;
 
     protected static WakeLock wakeLock = null;
@@ -170,7 +161,6 @@ public class AugmentedReality extends SensorsActivity implements OnTouchListener
             public void onClick(View v) {
                 //take photo
                 magicalCamera.takePhoto();
-                Toast.makeText(AugmentedReality.this, "Woyyy", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -185,15 +175,15 @@ public class AugmentedReality extends SensorsActivity implements OnTouchListener
 
         //if you need save your bitmap in device use this method and return the path if you need this
         //You need to send, the bitmap picture, the photo name, the directory name, the picture type, and autoincrement photo name if           //you need this send true, else you have the posibility or realize your standard name for your pictures.
-        String path = magicalCamera.savePhotoInMemoryDevice(magicalCamera.getPhoto(),"SampahKuNewTrash", "sampahku", MagicalCamera.JPEG, true);
+        String path = magicalCamera.savePhotoInMemoryDevice(magicalCamera.getPhoto(),"SampahKuAR", "sampahku", MagicalCamera.JPEG, true);
 
         if(path != null){
-            Toast.makeText(AugmentedReality.this, "The photo is save in device, please check this path: " + path, Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(this, NewTrashActivity.class);
+            Toast.makeText(AugmentedRealityStory.this, "The photo is save in device, please check this path: " + path, Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, NewStoryActivity.class);
             intent.putExtra("pathImage", path);
             startActivity(intent);
         }else{
-            Toast.makeText(AugmentedReality.this, "Sorry your photo dont write in device, maybe your permission is still not allowing you to write on external storage", Toast.LENGTH_SHORT).show();
+            Toast.makeText(AugmentedRealityStory.this, "Sorry your photo dont write in device, maybe your permission is still not allowing you to write on external storage", Toast.LENGTH_SHORT).show();
         }
     }
 

@@ -33,11 +33,11 @@ public class AugmentedView extends View {
 
     public AugmentedView(Context context) {
         super(context);
-        Log.v(TAG, "portrait              = "+AugmentedReality.ui_portrait);
-        Log.v(TAG, "useCollisionDetection = "+AugmentedReality.useCollisionDetection);
-        Log.v(TAG, "useSmoothing          = "+AugmentedReality.useDataSmoothing);
-        Log.v(TAG, "showRadar             = "+AugmentedReality.showRadar);
-        Log.v(TAG, "showZoomBar           = "+AugmentedReality.showZoomBar);
+        Log.v(TAG, "portrait              = "+ AugmentedRealityAddTrash.ui_portrait);
+        Log.v(TAG, "useCollisionDetection = "+ AugmentedRealityAddTrash.useCollisionDetection);
+        Log.v(TAG, "useSmoothing          = "+ AugmentedRealityAddTrash.useDataSmoothing);
+        Log.v(TAG, "showRadar             = "+ AugmentedRealityAddTrash.showRadar);
+        Log.v(TAG, "showZoomBar           = "+ AugmentedRealityAddTrash.showZoomBar);
     }
 
     /**
@@ -62,7 +62,7 @@ public class AugmentedView extends View {
             }
             collection = cache;
 
-            if (AugmentedReality.useCollisionDetection) 
+            if (AugmentedRealityAddTrash.useCollisionDetection)
                 adjustForCollisions(canvas, collection);
 
             // Draw AR markers in reverse order since the last drawn should be
@@ -74,7 +74,7 @@ public class AugmentedView extends View {
             }
 
             // Radar circle and radar markers
-            if (AugmentedReality.showRadar) 
+            if (AugmentedRealityAddTrash.showRadar)
                 radar.draw(canvas);
             drawing.set(false);
         }

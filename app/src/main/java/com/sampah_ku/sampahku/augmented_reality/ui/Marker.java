@@ -8,7 +8,7 @@ import android.graphics.Matrix;
 import android.location.Location;
 import android.util.Log;
 
-import com.sampah_ku.sampahku.augmented_reality.activity.AugmentedReality;
+import com.sampah_ku.sampahku.augmented_reality.activity.AugmentedRealityAddTrash;
 import com.sampah_ku.sampahku.augmented_reality.camera.CameraModel;
 import com.sampah_ku.sampahku.augmented_reality.common.Vector;
 import com.sampah_ku.sampahku.augmented_reality.data.ARData;
@@ -482,7 +482,7 @@ public class Marker implements Comparable<Marker> {
         gpsSymbol.setCoordinates(0, -gpsSymbol.getHeight()/2);
 
         float currentAngle = 0;
-        if (AugmentedReality.useMarkerAutoRotate) {
+        if (AugmentedRealityAddTrash.useMarkerAutoRotate) {
             currentAngle = ARData.getDeviceOrientationAngle()+90;
             currentAngle = 360 - currentAngle;
         }
@@ -520,7 +520,7 @@ public class Marker implements Comparable<Marker> {
         textBox.setCoordinates(0, textBox.getHeight()/2);
 
         float currentAngle = 0;
-        if (AugmentedReality.useMarkerAutoRotate) {
+        if (AugmentedRealityAddTrash.useMarkerAutoRotate) {
             currentAngle = ARData.getDeviceOrientationAngle()+90;
             currentAngle = 360 - currentAngle;
         }
@@ -544,7 +544,7 @@ public class Marker implements Comparable<Marker> {
         float y = locationArray[1];
 
         float currentAngle = 0;
-        if (AugmentedReality.useMarkerAutoRotate) {
+        if (AugmentedRealityAddTrash.useMarkerAutoRotate) {
             currentAngle = ARData.getDeviceOrientationAngle()+90;
             currentAngle = 360 - currentAngle;
         }

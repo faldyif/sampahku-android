@@ -7,12 +7,30 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
+        android:background="#d8e0f5"
         android:layout_height="match_parent">
 
         <TextView
-            android:text="ISI REWARD FRAGMENT"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:id="@+id/textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="#059255"
+            android:fontFamily="Futura Md"
+            android:padding="10dp"
+            android:text="10.000"
+            android:textAlignment="center"
+            android:textColor="#ffffff"
+            android:textSize="60dp"
+            android:textStyle="bold" />
+
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/listkategori"
+            android:layout_weight="0.5"
+            android:divider="#059255"
+            android:dividerHeight="2dp"/>
 
     </LinearLayout>
 
