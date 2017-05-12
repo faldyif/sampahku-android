@@ -2,14 +2,22 @@ package com.sampah_ku.sampahku.fragment;
 
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,13 +33,28 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.gson.Gson;
+import com.loopj.android.http.TextHttpResponseHandler;
 import com.sampah_ku.sampahku.AppConfig;
 import com.sampah_ku.sampahku.R;
 import com.sampah_ku.sampahku.augmented_reality.activity.AugmentedReality;
 import com.sampah_ku.sampahku.augmented_reality.activity.Demo;
 import com.sampah_ku.sampahku.augmented_reality.activity.SensorsActivity;
+import com.sampah_ku.sampahku.augmented_reality.data.ARData;
+import com.sampah_ku.sampahku.augmented_reality.ui.IconMarker;
+import com.sampah_ku.sampahku.augmented_reality.ui.Marker;
+import com.sampah_ku.sampahku.function.SampahkuRestClient;
+import com.sampah_ku.sampahku.model.ResponseTrash;
+import com.sampah_ku.sampahku.model.Trash;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
+
+import cz.msebera.android.httpclient.Header;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -39,6 +62,8 @@ import java.util.Random;
  * create an instance of this fragment.
  */
 public class MapsFragment extends Fragment implements OnMapReadyCallback {
+
+    private static final String TAG = MapsFragment.class.getSimpleName();
 
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -143,35 +168,89 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
             requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, RC_LOCATION_PERM);
         } else {
             googleMap.setMyLocationEnabled(true);
+            LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+            Criteria criteria = new Criteria();
+
+            Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
+            if (location != null)
+            {
+                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
+                        new LatLng(location.getLatitude(), location.getLongitude()), 13));
+
+                cameraPosition = new CameraPosition.Builder()
+                        .target(new LatLng(location.getLatitude(), location.getLongitude()))      // Sets the center of the map to location user
+                        .zoom(17)                   // Sets the zoom
+                        .build();
+                googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+
+            }
         }
 
-        for(int i=0;i<50;i++) {
-            googleMap.addMarker(new MarkerOptions()
-                    .position(new LatLng(centerLatitude + randomInRange(-0.01, 0.01), centerLongitude + randomInRange(-0.01, 0.01)))
-                    .title("Tempat sampah").snippet("Klik untuk melaporkan tempat sampah yang salah")
-                    .icon(BitmapDescriptorFactory.fromResource(AppConfig.DRAWABLE_TRASH_PORTABLE_VERIFIED)));
-            googleMap.addMarker(new MarkerOptions()
-                    .position(new LatLng(centerLatitude + randomInRange(-0.01, 0.01), centerLongitude + randomInRange(-0.01, 0.01)))
-                    .title("Tempat sampah").snippet("Klik untuk melaporkan tempat sampah yang salah")
-                    .icon(BitmapDescriptorFactory.fromResource(AppConfig.DRAWABLE_TRASH_TETAP_VERIFIED)));
-            googleMap.addMarker(new MarkerOptions()
-                    .position(new LatLng(centerLatitude + randomInRange(-0.01, 0.01), centerLongitude + randomInRange(-0.01, 0.01)))
-                    .title("Tempat sampah").snippet("Klik untuk melaporkan tempat sampah yang salah")
-                    .icon(BitmapDescriptorFactory.fromResource(AppConfig.DRAWABLE_TRASH_PORTABLE_UNVERIFIED)));
-            googleMap.addMarker(new MarkerOptions()
-                    .position(new LatLng(centerLatitude + randomInRange(-0.01, 0.01), centerLongitude + randomInRange(-0.01, 0.01)))
-                    .title("Tempat sampah").snippet("Klik untuk melaporkan tempat sampah yang salah")
-                    .icon(BitmapDescriptorFactory.fromResource(AppConfig.DRAWABLE_TRASH_TETAP_UNVERIFIED)));
-        }
+        downloadMarkers();
     }
 
-    protected static Random random = new Random();
+    public void downloadMarkers() {
+        SampahkuRestClient.post("trash/all", null, new TextHttpResponseHandler() {
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                Log.d(TAG, "Response: " + responseString.substring(3000));
+                Log.d(TAG, "Response error: " + throwable.toString());
+            }
 
-    public static double randomInRange(double min, double max) {
-        double range = max - min;
-        double scaled = random.nextDouble() * range;
-        double shifted = scaled + min;
-        return shifted; // == (rand.nextDouble() * (max-min)) + min;
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String responseString) {
+                Log.d(TAG, "Response: " + responseString);
+
+                try {
+                    JSONObject jObj = new JSONObject(responseString);
+                    boolean error = jObj.getBoolean("error");
+
+                    // Check for error node in json
+                    if (!error) {
+                        Gson gson = new Gson();
+                        String test = gson.toJson(gson.fromJson(responseString, ResponseTrash.class));
+                        Log.d(TAG, "onSuccess: " + test);
+                        List<Trash> trashes = gson.fromJson(responseString, ResponseTrash.class).getTrash();
+
+                        for(Trash trash : trashes) {
+                            int pinImage;
+                            String snippet;
+
+                            Log.d(TAG, "onSuccess: " + trash.getTrash_type_id() + " " + trash.getVerified());
+                            if(trash.getTrash_type_id().equals("1") && trash.getVerified().equals(1)) {
+                                pinImage = R.drawable.trash_large_ver;
+                                snippet = "TPA Terverifikasi";
+                            } else if(trash.getTrash_type_id().equals("1") && trash.getVerified().equals(0)) {
+                                pinImage = R.drawable.trash_large_unver;
+                                snippet = "TPA Belum Terverifikasi";
+                            } else if(trash.getTrash_type_id().equals("2") && trash.getVerified().equals(1)) {
+                                pinImage = R.drawable.trash_small_ver;
+                                snippet = "Tempat Sampah Portable Terverifikasi";
+                            } else if(trash.getTrash_type_id().equals("2") && trash.getVerified().equals(0)) {
+                                pinImage = R.drawable.trash_small_unver;
+                                snippet = "Tempat Sampah Portable Belum Terverifikasi";
+                            } else {
+                                pinImage = R.drawable.trash_large_ver;
+                                snippet = "Unknown";
+                            }
+
+                            googleMap.addMarker(new MarkerOptions()
+                                    .position(new LatLng(trash.getLatitude(), trash.getLongitude()))
+                                    .title(trash.getDescription()).snippet(snippet)
+                                    .icon(BitmapDescriptorFactory.fromResource(pinImage)));
+                        }
+                    } else {
+                        // Error in login. Get the error message
+                        String errorMsg = jObj.getString("error_msg");
+                        Log.d(TAG, "onSuccess: " + errorMsg);
+                    }
+                } catch (JSONException e) {
+                    // JSON error
+                    e.printStackTrace();
+                    Log.d(TAG, "onSuccess: " + e.getMessage());
+                }
+            }
+        });
     }
 
     @Override

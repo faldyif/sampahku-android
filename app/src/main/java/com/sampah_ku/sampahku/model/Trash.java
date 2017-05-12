@@ -10,13 +10,13 @@ public class Trash {
     private String photo_path;
     private String user_id;
     private String trash_type_id;
-    private Double verified;
+    private Integer verified;
     private Double latitude;
     private Double longitude;
     private Double accuracy;
     private TrashType trash_type;
 
-    public Trash(String id, String description, String photo_path, String user_id, String trash_type_id, Double verified, Double latitude, Double longitude, Double accuracy, TrashType trash_type) {
+    public Trash(String id, String description, String photo_path, String user_id, String trash_type_id, Integer verified, Double latitude, Double longitude, Double accuracy, TrashType trash_type) {
         this.id = id;
         this.description = description;
         this.photo_path = photo_path;
@@ -69,11 +69,11 @@ public class Trash {
         this.trash_type_id = trash_type_id;
     }
 
-    public Double getVerified() {
+    public Integer getVerified() {
         return verified;
     }
 
-    public void setVerified(Double verified) {
+    public void setVerified(Integer verified) {
         this.verified = verified;
     }
 
